@@ -41,12 +41,21 @@
         <form action="/books/desc/update/{{ book.id}}" method="POST">
             {% csrf_token %}
             <p>Description: </p>
+                <input type="hidden" name="title" value="{{ book.title }}">
                 <textarea name="desc" cols="30" rows="10">{{ book.desc }}</textarea>
                 <input type="submit" value="Update" class="btn btn-secondary">
                 <a href="/books/delete/{{ book.id }}" class="btn btn-danger">Delete Book!</a>
         </form>
         {% else %}
         <p>Description: {{ book.desc }}</p>
+        {% endif %}
+
+        {% if messages %}
+        <ul class="messages my-3">    
+            {% for message in messages %}    
+            {% if message.tags == "error" %}<li class="{{ message.tags }}">{{ message }}</li>{% endif %}
+            {% endfor %}
+        </ul>
         {% endif %}
 
     </div>

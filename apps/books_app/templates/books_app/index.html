@@ -50,6 +50,14 @@
 
             </form>
 
+            {% if messages %}
+            <ul class="messages my-3">    
+                {% for message in messages %}    
+                {% if message.tags == "error" %}<li class="{{ message.tags }}">{{ message }}</li>{% endif %}
+                {% endfor %}
+            </ul>
+            {% endif %}
+
 
         </div>
 

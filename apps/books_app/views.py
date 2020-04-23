@@ -47,8 +47,15 @@ def unFavoriteThisBook(request, id):
 
 def updateBookDesc(request, id):
     thisBook = Book.objects.get(id=id)
-    thisBook.desc = request.POST['desc']
-    thisBook.save()
+
+    errors = Book.objects.book_validator(request.POST)
+    if len(errors) > 0:
+        for k, v in errors.items():
+            messages.error(request, v)
+        return redirect('/books/' + str(id))
+    else:
+        thisBook.desc = request.POST['desc']
+        thisBook.save()
 
     return redirect('/books/' + str(id))
 
