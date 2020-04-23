@@ -34,7 +34,7 @@
 
             <h3>Add a Favorite Book</h3>
             <form action="/books/create/" method="POST">
-                
+                {% csrf_token %}
                 <div class="form-group">
                     <label for="title">Title</label>
                     <input class="form-control" type="text" name="title">
@@ -55,17 +55,15 @@
 
 
         <div class="col-xl-7">
-            <h2>All Books</h2>
-
+            <h2 class="mt-4">All Books</h2>
             {% for book in allBooks %}
-
-            <h4><a href="/books/{{ book.id }}">{{ book.title }}</a></h4>
-            <h5>(added by {{ book.uploader.first_name }} {{ book.uploader.last_name }})</h5>
-            {% if book in thisUser.books_liked %}
-            <p>This is one of your favorite books!</p>
-            {% else %}
-            <p><a href="/books/favorite/{{ book.id }}">Add to Favorites</a></p>
-            {% endif %}
+                <h4><a href="/books/{{ book.id }}">{{ book.title }}</a></h4>
+                <h5>(added by {{ book.uploader.first_name }} {{ book.uploader.last_name }})</h5>
+                {% if book in user.books_liked.all %}
+                    <p>This is one of your favorite books!</p>
+                {% else %}
+                    <p><a href="/books/favorite/{{ book.id }}">Add to Favorites</a></p>
+                {% endif %}
 
             {% endfor %}
 

@@ -27,22 +27,23 @@
 <body>
 <div class="container">
 
-    <h1>Welcome {{ user.first_name }} {{ user.last_name }}</h1>
+    <h1>Welcome {{ thisUser.first_name }} {{ thisUser.last_name }}</h1>
     <hr>
 
-    <div class="col-xl-7">
-        <h1 class="display-1 bg-light text-dark">{{ book.title }}</h1>
+    <div class="col-xl-6">
+        <h1 class="display-4 bg-light text-dark">{{ book.title }}</h1>
 
-        <h5>Added by: {{ book.uploader }}</h5>
+        <h5>Added by: {{ book.uploader.first_name }} {{ book.uploader.last_name }}</h5>
         <h5>Added on: {{ book.created_at }}</h5>
         <h5>Last updated on: {{ book.updated_at }}</h5>
 
         {% if book.uploader.id == request.session.cur_user %}
-        <form action="/books/desc/update/">Update
+        <form action="/books/desc/update/{{ book.id}}" method="POST">
+            {% csrf_token %}
             <p>Description: </p>
                 <textarea name="desc" cols="30" rows="10">{{ book.desc }}</textarea>
                 <input type="submit" value="Update" class="btn btn-secondary">
-                <a href="/books/delete/{{ book.id }}" class="btn btn-danger"></a>
+                <a href="/books/delete/{{ book.id }}" class="btn btn-danger">Delete Book!</a>
         </form>
         {% else %}
         <p>Description: {{ book.desc }}</p>
@@ -55,7 +56,7 @@
         <h2>Users Who Like This Book:</h2>
 
         <ul>
-            {% for user in book.users_who_like %}
+            {% for user in book.users_who_like.all %}
                 <li>{{ user.first_name }} {{ user.last_name }} 
                     {% if user.id == request.session.cur_user %}
                         <p><a href="/books/unfavorite/{{ book.id }}/">Unfavorite</a></p>
@@ -64,12 +65,14 @@
             {% endfor %}
         </ul>
 
-        {% if not user in book.users_who_like %}
+        {% if not thisUser in book.users_who_like.all %}
             <p><a href="/books/favorite/{{ book.id }}/">Add to Favorites</a></p>
         {% endif %}
 
 
     </div>
+
+    <a href="/books/" class="btn btn-lg btn-success">Back to Books!</a>
 
 </div>
 

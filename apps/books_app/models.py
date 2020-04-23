@@ -24,7 +24,7 @@ class BookManager(models.Manager):
 class Book(models.Model):
     title = models.CharField(max_length=255)
     desc = models.TextField()
-    uploader = models.ForeignKey('login_reg.User', related_name="books_uploaded")
+    uploader = models.ForeignKey('login_reg.User', related_name="books_uploaded", on_delete=models.CASCADE)
     users_who_like = models.ManyToManyField('login_reg.User', related_name="books_liked")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

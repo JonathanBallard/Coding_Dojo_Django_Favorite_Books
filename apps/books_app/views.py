@@ -8,8 +8,8 @@ from .models import *
 # Create your views here. 
 def index(request): 
 
-    allBooks = Book.objects.all()
-    thisUser = User.object.get(id=request.session['cur_user'])
+    allBooks = Book.objects.all
+    thisUser = User.objects.get(id=request.session['cur_user'])
 
     context = {
         "allBooks" : allBooks,
@@ -26,22 +26,51 @@ def createBook(request):
             messages.error(request, v)
         return redirect('/books/')
     else:
-        Book.objects.new_book(postData, thisUser)
+        thisBook = Book.objects.new_book(request.POST, thisUser)
+        thisBook.users_who_like.add(thisUser)
         return redirect('/books/')
 
 def favoriteThisBook(request, id):
-    pass
+    thisBook = Book.objects.get(id=id)
+    thisUser = User.objects.get(id=request.session['cur_user'])
+
+    thisBook.users_who_like.add(thisUser)
+    return redirect('/books/' + str(id))
+
 
 def unFavoriteThisBook(request, id):
-    pass
+    thisBook = Book.objects.get(id=id)
+    thisUser = User.objects.get(id=request.session['cur_user'])
 
+    thisBook.users_who_like.remove(thisUser)
+    return redirect('/books/' + str(id))
 
+def updateBookDesc(request, id):
+    thisBook = Book.objects.get(id=id)
+    thisBook.desc = request.POST['desc']
+    thisBook.save()
+
+    return redirect('/books/' + str(id))
 
 def thisBook(request, id):
-    pass
+    thisBook = Book.objects.get(id=id)
+    thisUser = User.objects.get(id=request.session['cur_user'])
+
+    context = {
+        "book" : thisBook,
+        "thisUser" : thisUser,
+
+    }
+    return render(request, 'books_app/book.html', context)
 
 def deleteBook(request, id):
-    pass
+    thisBook = Book.objects.get(id=id)
+    thisUser = User.objects.get(id=request.session['cur_user'])
+
+    if thisBook.uploader == thisUser:
+        thisBook.delete()
+
+    return redirect('/books/')
 
 def destroy(request):
     request.session.flush()
